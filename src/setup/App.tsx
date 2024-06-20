@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { ReactElement, Suspense, lazy, useEffect, useState } from "react";
 import { lazyWithPreload } from "react-lazy-with-preload";
 import {
@@ -92,7 +92,7 @@ function QueryView() {
 function App() {
   useHistoryListener();
   useOnlineListener();
-  const maintenance = false; // Shows maintance page
+  const maintenance = false; // Shows maintenance page
   const [showDowntime, setShowDowntime] = useState(maintenance);
 
   const handleButtonClick = () => {
