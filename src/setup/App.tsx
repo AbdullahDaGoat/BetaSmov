@@ -1,3 +1,6 @@
+/* eslint-disable import/no-extraneous-dependencies */
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ReactElement, Suspense, lazy, useEffect, useState } from "react";
 import { lazyWithPreload } from "react-lazy-with-preload";
 import {
@@ -106,6 +109,8 @@ function App() {
 
   return (
     <Layout>
+      <Analytics />
+      <SpeedInsights />
       <LanguageProvider />
       {!showDowntime && (
         <Routes>
