@@ -1,18 +1,33 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { get } from "@/backend/metadata/tmdb";
 import { conf } from "@/setup/config";
 
 interface ModalEpisodeSelectorProps {
   tmdbId: string;
+  mediaTitle: string;
 }
 
-export function EpisodeSelector({ tmdbId }: ModalEpisodeSelectorProps) {
-  const [seasonsData, setSeasonsData] = useState<any[]>([]);
+interface Season {
+  season_number: number;
+  id: number;
+}
+
+interface ShowDetails {
+  seasons: Season[];
+}
+
+export function EpisodeSelector({
+  tmdbId,
+  mediaTitle,
+}: ModalEpisodeSelectorProps) {
+  const [seasonsData, setSeasonsData] = useState<Season[]>([]);
   const [selectedSeason, setSelectedSeason] = useState<any>(null);
+  const navigate = useNavigate();
 
   const handleSeasonSelect = useCallback(
-    async (season: any) => {
+    async (season: Season) => {
       try {
         const seasonDetails = await get<any>(
           `/tv/${tmdbId}/season/${season.season_number}`,
@@ -21,7 +36,11 @@ export function EpisodeSelector({ tmdbId }: ModalEpisodeSelectorProps) {
             language: "en-US",
           },
         );
-        setSelectedSeason(seasonDetails);
+        setSelectedSeason({
+          ...seasonDetails,
+          season_number: season.season_number,
+          id: season.id,
+        });
       } catch (err) {
         console.error(err);
       }
@@ -32,12 +51,19 @@ export function EpisodeSelector({ tmdbId }: ModalEpisodeSelectorProps) {
   useEffect(() => {
     const fetchSeasons = async () => {
       try {
-        const showDetails = await get<any>(`/tv/${tmdbId}`, {
+        const showDetails = await get<ShowDetails>(`/tv/${tmdbId}`, {
           api_key: conf().TMDB_READ_API_KEY,
           language: "en-US",
         });
         setSeasonsData(showDetails.seasons);
-        handleSeasonSelect(showDetails.seasons[0]); // Default to first season
+        const regularSeasons = showDetails.seasons.filter(
+          (season: Season) => season.season_number > 0,
+        );
+        if (regularSeasons.length > 0) {
+          handleSeasonSelect(regularSeasons[0]);
+        } else if (showDetails.seasons.length > 0) {
+          handleSeasonSelect(showDetails.seasons[0]);
+        }
       } catch (err) {
         console.error(err);
       }
@@ -47,18 +73,24 @@ export function EpisodeSelector({ tmdbId }: ModalEpisodeSelectorProps) {
 
   return (
     <div className="flex flex-row">
-      <div className="sm:w-96 w-96 sm:block flex-auto overflow-y-scroll overflow-x-hidden max-h-52 scrollbar-track-gray-300">
-        {seasonsData.map((season) => (
+      <div className="sm:w-96 w-96 sm:block cursor-pointer overflow-y-scroll overflow-x-hidden max-h-60 max-w-24">
+        {seasonsData.map((season: Season) => (
           <div
-            key={season.season_number}
+            key={season.id}
             onClick={() => handleSeasonSelect(season)}
-            className="cursor-pointer hover:bg-search-background p-1 text-center rounded hover:scale-95 transition-transform duration-300"
+            className={`cursor-pointer p-1 text-center rounded transition-transform duration-200 ${
+              selectedSeason && season.id === selectedSeason.id
+                ? "bg-search-background"
+                : "hover:bg-search-background hover:scale-95"
+            }`}
           >
-            S{season.season_number}
+            {season.season_number !== 0
+              ? `S${season.season_number}`
+              : `Specials`}
           </div>
         ))}
       </div>
-      <div className="flex-auto mt-4 sm:mt-0 sm:ml-4 overflow-y-auto overflow-x-hidden max-h-52 order-1 sm:order-2">
+      <div className="flex-auto mt-4 cursor-pointer sm:mt-0 sm:ml-4 overflow-y-auto overflow-x-hidden max-h-60 order-1 sm:order-2">
         <div className="grid grid-cols-3 gap-2">
           {selectedSeason ? (
             selectedSeason.episodes.map(
@@ -66,18 +98,30 @@ export function EpisodeSelector({ tmdbId }: ModalEpisodeSelectorProps) {
                 episode_number: number;
                 name: string;
                 still_path: string;
+                id: number;
               }) => (
                 <div
-                  key={episode.episode_number}
-                  className="bg-mediaCard-hoverBackground rounded p-2 hover:scale-95 hover:border-purple-500 hover:border-2 transition-all duration-300 relative"
+                  key={episode.id}
+                  onClick={() => {
+                    const url = `/media/tmdb-tv-${tmdbId}-${mediaTitle}/${selectedSeason.id}/${episode.id}`;
+                    // eslint-disable-next-line no-console
+                    console.log(`Navigating to: ${url}`);
+                    // eslint-disable-next-line no-console
+                    console.log(
+                      `Season ID: ${selectedSeason.id}, Episode ID: ${episode.id}`,
+                    );
+                    navigate(url);
+                  }}
+                  className="bg-mediaCard-hoverBackground rounded p-2 hover:scale-95 transition-transform transition-border-color duration-[0.28s] ease-in-out transform-origin-center"
                 >
                   <img
-                    src={`https://image.tmdb.org/t/p/w300/${episode.still_path}`}
-                    alt={episode.name}
+                    src={`https://image.tmdb.org/t/p/w500/${episode.still_path}`}
                     className="w-full h-auto rounded"
+                    alt={episode.name}
                   />
-                  <p className="text-center mt-2">{episode.name}</p>
-                  <div className="absolute inset-0 opacity-0 hover:opacity-20 transition-opacity duration-300 bg-purple-500 rounded pointer-events-none" />
+                  <p className="text-center text-[0.95em] mt-2">
+                    {`S${selectedSeason.season_number}E${episode.episode_number}: ${episode.name}`}
+                  </p>
                 </div>
               ),
             )

@@ -26,9 +26,10 @@ export function BookmarksPart({
   const items = useMemo(() => {
     let output: MediaItem[] = [];
     Object.entries(bookmarks).forEach((entry) => {
-      output.push({
+      return output.push({
         id: entry[0],
         ...entry[1],
+        seasons: undefined,
       });
     });
     output = output.sort((a, b) => {
