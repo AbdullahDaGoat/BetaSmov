@@ -179,7 +179,7 @@ export function PopupModal({
         style={{ opacity: style.opacity, maxHeight: "80vh", height: "auto" }}
       >
         <div className="aspect-w-16 aspect-h-9 w-full sm:w-auto">
-          <div className="rounded-xl overflow-hidden">
+          <div className="pt-96 rounded-xl overflow-hidden">
             {" "}
             {/* Added maxHeight here */}
             {data?.backdrop_path ? (

@@ -77,7 +77,7 @@ export function EpisodeSelector({
     <div className={`flex ${isMobile ? "flex-col" : "flex-row"}`}>
       <div
         className={`cursor-pointer overflow-y-auto overflow-x-hidden ${
-          isMobile ? "w-full max-h-40 order-1" : "w-64 max-h-[80vh]"
+          isMobile ? "w-full max-h-40 order-1" : "w-52 max-h-[70vh]"
         }`}
       >
         {seasonsData.map((season: Season) => (
