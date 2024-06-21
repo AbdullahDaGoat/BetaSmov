@@ -57,29 +57,27 @@ export function EpisodeSelector({
   }, [handleSeasonSelect, tmdbId]);
 
   return (
-    <div className="flex flex-col sm:flex-row">
-      <div className="w-full sm:w-96 cursor-pointer overflow-x-auto sm:overflow-y-scroll sm:overflow-x-hidden max-h-20 sm:max-h-60 mb-4 sm:mb-0">
-        <div className="flex sm:block whitespace-nowrap">
-          {seasonsData.map((season) => (
-            <div
-              key={season.season_number}
-              onClick={() => handleSeasonSelect(season)}
-              className={`cursor-pointer p-1 text-center rounded transition-transform duration-200 inline-block sm:block mr-2 sm:mr-0 ${
-                selectedSeason &&
-                season.season_number === selectedSeason.season_number
-                  ? "bg-search-background"
-                  : "hover:bg-search-background hover:scale-95"
-              }`}
-            >
-              {season.season_number !== 0
-                ? `S${season.season_number}`
-                : `Specials`}
-            </div>
-          ))}
-        </div>
+    <div className="flex flex-row relative">
+      <div className="w-24 sm:w-96 cursor-pointer overflow-y-auto overflow-x-hidden max-h-60 z-10">
+        {seasonsData.map((season) => (
+          <div
+            key={season.season_number}
+            onClick={() => handleSeasonSelect(season)}
+            className={`cursor-pointer p-1 text-center rounded transition-transform duration-200 ${
+              selectedSeason &&
+              season.season_number === selectedSeason.season_number
+                ? "bg-search-background"
+                : "hover:bg-search-background hover:scale-95"
+            }`}
+          >
+            {season.season_number !== 0
+              ? `S${season.season_number}`
+              : `Specials`}
+          </div>
+        ))}
       </div>
-      <div className="flex-auto mt-4 cursor-pointer sm:mt-0 sm:ml-4 overflow-y-auto overflow-x-hidden max-h-60">
-        <div className="grid grid-cols-3 gap-2">
+      <div className="flex-auto mt-4 sm:mt-0 sm:ml-4 overflow-x-auto overflow-y-hidden sm:overflow-y-auto sm:overflow-x-hidden max-h-60 max-w-[70vw] z-0">
+        <div className="flex sm:grid sm:grid-cols-3 sm:gap-2">
           {selectedSeason ? (
             selectedSeason.episodes.map(
               (episode: {
@@ -96,7 +94,7 @@ export function EpisodeSelector({
                       `/media/tmdb-tv-${tmdbId}-${mediaTitle}/${episode.show_id}/${episode.id}`,
                     )
                   }
-                  className="bg-mediaCard-hoverBackground rounded p-2 hover:scale-95 transition-transform transition-border-color duration-[0.28s] ease-in-out transform-origin-center"
+                  className="bg-mediaCard-hoverBackground rounded p-2 hover:scale-95 transition-transform transition-border-color duration-[0.28s] ease-in-out transform-origin-center flex-shrink-0 w-48 sm:w-auto mr-2 sm:mr-0"
                 >
                   <img
                     src={`https://image.tmdb.org/t/p/w500/${episode.still_path}`}
