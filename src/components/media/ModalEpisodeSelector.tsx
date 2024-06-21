@@ -76,15 +76,13 @@ export function EpisodeSelector({
   return (
     <div className={`flex ${isMobile ? "flex-col" : "flex-row"}`}>
       <div
-        className={`cursor-pointer overflow-y-auto overflow-x-hidden ${
-          isMobile ? "w-full max-h-40 order-1" : "w-52 max-h-[70vh]"
-        }`}
+        className={`${isMobile ? "w-full" : "w-96"} cursor-pointer overflow-y-auto overflow-x-hidden ${isMobile ? "max-h-40" : "max-h-60"} ${isMobile ? "" : "max-w-24"} ${isMobile ? "order-1" : ""}`}
       >
         {seasonsData.map((season: Season) => (
           <div
             key={season.id}
             onClick={() => handleSeasonSelect(season)}
-            className={`cursor-pointer p-2 text-center rounded transition-transform duration-200 mb-2 ${
+            className={`cursor-pointer p-1 text-center rounded transition-transform duration-200 ${
               selectedSeason && season.id === selectedSeason.id
                 ? "bg-search-background"
                 : "hover:bg-search-background hover:scale-95"
@@ -97,13 +95,11 @@ export function EpisodeSelector({
         ))}
       </div>
       <div
-        className={`flex-auto cursor-pointer overflow-y-auto overflow-x-hidden ${
-          isMobile
-            ? "mt-4 max-h-[calc(100vh-200px)] order-2"
-            : "ml-4 max-h-[60vh]"
-        }`}
+        className={`flex-auto ${isMobile ? "mt-4" : "ml-4"} cursor-pointer overflow-y-auto overflow-x-hidden ${isMobile ? "max-h-[calc(100vh-200px)]" : "max-h-60"} ${isMobile ? "order-2" : ""}`}
       >
-        <div className="grid grid-cols-2 gap-4">
+        <div
+          className={`grid ${isMobile ? "grid-cols-2" : "grid-cols-3"} gap-2`}
+        >
           {selectedSeason ? (
             selectedSeason.episodes.map(
               (episode: {
@@ -122,13 +118,13 @@ export function EpisodeSelector({
                 >
                   <div className="relative pt-[56.25%]">
                     <img
-                      src={`https://image.tmdb.org/t/p/w400${episode.still_path}`}
+                      src={`https://image.tmdb.org/t/p/w300${episode.still_path}`}
                       className="absolute top-0 left-0 w-full h-full object-cover rounded"
                       alt={episode.name}
                     />
                   </div>
-                  <p className="text-center text-sm mt-2">
-                    {`S${selectedSeason.season_number} E${episode.episode_number}: ${episode.name}`}
+                  <p className="text-center text-xs sm:text-[0.95em] mt-2 truncate">
+                    {`S${selectedSeason.season_number}E${episode.episode_number}: ${episode.name}`}
                   </p>
                 </div>
               ),
