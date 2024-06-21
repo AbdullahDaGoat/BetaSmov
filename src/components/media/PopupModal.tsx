@@ -170,23 +170,25 @@ export function PopupModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 transition-opacity duration-100"
+      className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 transition-opacity duration-100 pt-16"
       style={{ opacity: style.opacity, visibility: style.visibility }}
     >
       <div
         ref={modalRef}
         className="rounded-xl bg-modal-background flex flex-col justify-center items-center transition-opacity duration-100 max-w-full sm:max-w-xl w-full sm:w-auto sm:h-auto overflow-y-auto p-4"
-        style={{ opacity: style.opacity, maxHeight: "90vh", height: "auto" }}
+        style={{ opacity: style.opacity, maxHeight: "80vh", height: "auto" }}
       >
         <div className="aspect-w-16 aspect-h-9 w-full sm:w-auto">
-          <div className="rounded-xl">
+          <div className="rounded-xl overflow-hidden">
+            {" "}
+            {/* Added maxHeight here */}
             {data?.backdrop_path ? (
               <img
                 src={`https://image.tmdb.org/t/p/original/${data.backdrop_path}`}
                 alt={media.poster ? "" : "failed to fetch :("}
                 className="rounded-xl object-cover w-full h-full"
                 loading="lazy"
-                style={{ maxHeight: "60vh" }}
+                style={{ objectFit: "cover", maxHeight: "40vh" }}
               />
             ) : (
               <Skeleton />

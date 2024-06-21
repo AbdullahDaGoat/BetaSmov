@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { get } from "@/backend/metadata/tmdb";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { conf } from "@/setup/config";
 
 interface ModalEpisodeSelectorProps {
@@ -25,6 +26,7 @@ export function EpisodeSelector({
   const [seasonsData, setSeasonsData] = useState<Season[]>([]);
   const [selectedSeason, setSelectedSeason] = useState<any>(null);
   const navigate = useNavigate();
+  const { isMobile } = useIsMobile();
 
   const handleSeasonSelect = useCallback(
     async (season: Season) => {
@@ -72,13 +74,17 @@ export function EpisodeSelector({
   }, [handleSeasonSelect, tmdbId]);
 
   return (
-    <div className="flex flex-row">
-      <div className="sm:w-96 w-96 sm:block cursor-pointer overflow-y-scroll overflow-x-hidden max-h-60 max-w-24">
+    <div className={`flex ${isMobile ? "flex-col" : "flex-row"}`}>
+      <div
+        className={`cursor-pointer overflow-y-auto overflow-x-hidden ${
+          isMobile ? "w-full max-h-40 order-1" : "w-64 max-h-[80vh]"
+        }`}
+      >
         {seasonsData.map((season: Season) => (
           <div
             key={season.id}
             onClick={() => handleSeasonSelect(season)}
-            className={`cursor-pointer p-1 text-center rounded transition-transform duration-200 ${
+            className={`cursor-pointer p-2 text-center rounded transition-transform duration-200 mb-2 ${
               selectedSeason && season.id === selectedSeason.id
                 ? "bg-search-background"
                 : "hover:bg-search-background hover:scale-95"
@@ -90,8 +96,14 @@ export function EpisodeSelector({
           </div>
         ))}
       </div>
-      <div className="flex-auto mt-4 cursor-pointer sm:mt-0 sm:ml-4 overflow-y-auto overflow-x-hidden max-h-60 order-1 sm:order-2">
-        <div className="grid grid-cols-3 gap-2">
+      <div
+        className={`flex-auto cursor-pointer overflow-y-auto overflow-x-hidden ${
+          isMobile
+            ? "mt-4 max-h-[calc(100vh-200px)] order-2"
+            : "ml-4 max-h-[60vh]"
+        }`}
+      >
+        <div className="grid grid-cols-2 gap-4">
           {selectedSeason ? (
             selectedSeason.episodes.map(
               (episode: {
@@ -104,29 +116,25 @@ export function EpisodeSelector({
                   key={episode.id}
                   onClick={() => {
                     const url = `/media/tmdb-tv-${tmdbId}-${mediaTitle}/${selectedSeason.id}/${episode.id}`;
-                    // eslint-disable-next-line no-console
-                    console.log(`Navigating to: ${url}`);
-                    // eslint-disable-next-line no-console
-                    console.log(
-                      `Season ID: ${selectedSeason.id}, Episode ID: ${episode.id}`,
-                    );
                     navigate(url);
                   }}
                   className="bg-mediaCard-hoverBackground rounded p-2 hover:scale-95 transition-transform transition-border-color duration-[0.28s] ease-in-out transform-origin-center"
                 >
-                  <img
-                    src={`https://image.tmdb.org/t/p/w500/${episode.still_path}`}
-                    className="w-full h-auto rounded"
-                    alt={episode.name}
-                  />
-                  <p className="text-center text-[0.95em] mt-2">
-                    {`S${selectedSeason.season_number}E${episode.episode_number}: ${episode.name}`}
+                  <div className="relative pt-[56.25%]">
+                    <img
+                      src={`https://image.tmdb.org/t/p/w400${episode.still_path}`}
+                      className="absolute top-0 left-0 w-full h-full object-cover rounded"
+                      alt={episode.name}
+                    />
+                  </div>
+                  <p className="text-center text-sm mt-2">
+                    {`S${selectedSeason.season_number} E${episode.episode_number}: ${episode.name}`}
                   </p>
                 </div>
               ),
             )
           ) : (
-            <div className="text-center w-full">
+            <div className="text-center w-full col-span-full">
               Select a season to see episodes
             </div>
           )}
