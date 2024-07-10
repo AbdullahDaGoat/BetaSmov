@@ -91,12 +91,12 @@ export function EpisodeSelector({
               }) => (
                 <Flare.Base
                   key={episode.episode_number}
-                  onClick={() => {
+                  onClick={() =>
                     navigate(
-                      `/media/tmdb-tv-${tmdbId}-${mediaTitle}/${selectedSeason.id}/${episode.id}`,
-                    );
-                  }}
-                  className="group cursor-pointer rounded-xl relative p-[0.6em] bg-background-secondary transition-colors duration-[0.25s] flex-shrink-0 w-44 max-h-48 sm:w-auto mr-2 sm:mr-0"
+                      `/media/tmdb-tv-${tmdbId}-${mediaTitle}/${episode.show_id}/${episode.id}`,
+                    )
+                  }
+                  className="group cursor-pointer rounded-xl relative p-[0.65em] bg-background-main transition-colors duration-[0.28s] flex-shrink-0 w-48 sm:w-auto mr-2 sm:mr-0"
                 >
                   <Flare.Light
                     flareSize={300}
@@ -109,11 +109,9 @@ export function EpisodeSelector({
                       src={`https://image.tmdb.org/t/p/w500/${episode.still_path}`}
                       className="w-full h-auto rounded"
                     />
-                    <div className="text-center my-2 overflow-hidden">
-                      <p className="text-[0.95em] overflow-ellipsis whitespace-wrap">
-                        E{episode.episode_number}: {episode.name}
-                      </p>
-                    </div>
+                    <p className="text-center text-[0.95em] mt-2">
+                      {episode.name}
+                    </p>
                   </div>
                 </Flare.Base>
               ),
